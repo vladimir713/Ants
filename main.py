@@ -108,15 +108,15 @@ class Ant(pygame.sprite.Sprite):
         return xy
     def runToEatByFerromons(self):
         collide = pygame.sprite.spritecollide(self, allEats, False, pygame.sprite.collide_rect_ratio(2.1))
-        if collide:
+        if collide:  # Если еда есть
             self.mode = 1
             for i in collide:
                 i.eatSize -= 2
-        else:
+        else:				# Если еды нет, продолжаем идти по ферромонам
             collideOutIn = pygame.sprite.spritecollide(self, allFerromon, False, pygame.sprite.collide_rect_ratio(3.1))
             collideIn = pygame.sprite.spritecollide(self, allFerromon, False)
             collideOut = list(set(collideOutIn) - set(collideIn))
-            if collideOut:
+            if collideOut:	# Если есть куда идти
                 maxFerr = -1
                 for i in collideOut:
                     b = any([(self.rect.topleft[n] - i.rect.topleft[n]) * (antHome.rect.topleft[n] - self.rect.topleft[n]) > 0 for n in range(2)])
@@ -124,11 +124,14 @@ class Ant(pygame.sprite.Sprite):
                         maxFerr = i.viol[0]
                         maxI = i                                      
                 if maxFerr >= 0:
-                    self.rect.topleft = maxI.rect.topleft
+                    self.rect.topleft = maxI.rect.topleft	
                 else:
-                    self.mode = 0
-            else:            
+	              		self.mode = 0
+										self.rect.topleft[0], self.rect.topleft[1] = self.rect.topleft[0]+random.randint(-1,2), self.rect.topleft[1]+random.randint(-1,2)
+						else:    # Если некуда идти        
                 self.mode = 0
+								self.rect.topleft[0] = self.rect.topleft[0] + random.randint(-1, 2)
+								self.rect.topleft[1] = self.rect.topleft[1] + random.randint(-1, 2)
         return self.rect.topleft
     def update(self):
         xy = self.rect.topleft
